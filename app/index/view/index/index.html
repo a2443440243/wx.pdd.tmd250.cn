@@ -1,0 +1,308 @@
+{extend name="layout" /}
+
+{block name="style"}
+<style>
+/* 轮播图样式 */
+.banner {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+}
+
+.banner-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.banner-item.active {
+    opacity: 1;
+}
+
+.banner-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+}
+
+.banner-title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.banner-desc {
+    font-size: 20px;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.banner-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #1E9FFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.banner-btn:hover {
+    background: #0078D4;
+    color: white;
+}
+
+/* 轮播图指示器 */
+.banner-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.indicator.active {
+    background: white;
+}
+
+/* 核心业务样式 */
+.services {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title h2 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.section-title p {
+    font-size: 16px;
+    color: #666;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.service-item {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.service-icon {
+    font-size: 48px;
+    color: #1E9FFF;
+    margin-bottom: 20px;
+}
+
+.service-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.service-desc {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .banner-title {
+        font-size: 32px;
+    }
+    
+    .banner-desc {
+        font-size: 16px;
+    }
+    
+    .section-title h2 {
+        font-size: 28px;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+</style>
+{/block}
+
+{block name="content"}
+<!-- 轮播图 -->
+<section class="banner" id="banner">
+    <div class="banner-item active" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="banner-content">
+            <h1 class="banner-title">智能活码生成平台</h1>
+            <p class="banner-desc">专业的二维码营销解决方案，让您的营销更智能</p>
+            <a href="#features" class="banner-btn">了解更多</a>
+        </div>
+    </div>
+    <div class="banner-item" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+        <div class="banner-content">
+            <h1 class="banner-title">多场景应用</h1>
+            <p class="banner-desc">支持微信群、客服、活动推广等多种营销场景</p>
+            <a href="#features" class="banner-btn">立即体验</a>
+        </div>
+    </div>
+    <div class="banner-item" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+        <div class="banner-content">
+            <h1 class="banner-title">数据统计分析</h1>
+            <p class="banner-desc">实时监控扫码数据，精准分析营销效果</p>
+            <a href="#features" class="banner-btn">查看功能</a>
+        </div>
+    </div>
+    
+    <!-- 指示器 -->
+    <div class="banner-indicators">
+        <span class="indicator active" data-index="0"></span>
+        <span class="indicator" data-index="1"></span>
+        <span class="indicator" data-index="2"></span>
+    </div>
+</section>
+
+<!-- 特色功能 -->
+<section id="features" class="services">
+    <div class="container">
+        <div class="section-title">
+            <h2>核心功能</h2>
+            <p>为您提供专业、高效、可靠的活码解决方案</p>
+        </div>
+        
+        <div class="services-grid">
+            <div class="service-item">
+                <div class="service-icon">📱</div>
+                <h3 class="service-title">智能活码</h3>
+                <p class="service-desc">自动切换二维码内容，避免微信封号风险，提高营销效果</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">📊</div>
+                <h3 class="service-title">数据统计</h3>
+                <p class="service-desc">实时统计扫码数据，分析用户行为，优化营销策略</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">🎯</div>
+                <h3 class="service-title">精准投放</h3>
+                <p class="service-desc">支持地域、时间、设备等多维度定向投放，提升转化率</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">🔧</div>
+                <h3 class="service-title">灵活配置</h3>
+                <p class="service-desc">可视化配置界面，支持多种展示样式和跳转规则</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">🛡️</div>
+                <h3 class="service-title">安全稳定</h3>
+                <p class="service-desc">企业级安全保障，99.9%服务可用性，数据安全可靠</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">⚡</div>
+                <h3 class="service-title">快速部署</h3>
+                <p class="service-desc">一键生成活码，快速接入各种营销场景，提升工作效率</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{/block}
+
+{block name="script"}
+<script>
+// 等待DOM加载完成
+document.addEventListener('DOMContentLoaded', function() {
+    // 轮播图自动切换
+    var bannerItems = document.querySelectorAll('.banner-item');
+    var indicators = document.querySelectorAll('.indicator');
+    var currentIndex = 0;
+    var bannerTimer;
+    
+    // 切换轮播图
+    function switchBanner(index) {
+        // 移除所有活动状态
+        bannerItems.forEach(item => item.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+        
+        // 添加当前活动状态
+        bannerItems[index].classList.add('active');
+        indicators[index].classList.add('active');
+        
+        currentIndex = index;
+    }
+    
+    // 自动轮播
+    function startBanner() {
+        bannerTimer = setInterval(function() {
+            var nextIndex = (currentIndex + 1) % bannerItems.length;
+            switchBanner(nextIndex);
+        }, 5000);
+    }
+    
+    // 停止轮播
+    function stopBanner() {
+        clearInterval(bannerTimer);
+    }
+    
+    // 指示器点击事件
+    indicators.forEach(function(indicator, index) {
+        indicator.addEventListener('click', function() {
+            switchBanner(index);
+            stopBanner();
+            startBanner();
+        });
+    });
+    
+    // 鼠标悬停暂停轮播
+    var banner = document.getElementById('banner');
+    if (banner) {
+        banner.addEventListener('mouseenter', stopBanner);
+        banner.addEventListener('mouseleave', startBanner);
+    }
+    
+    // 启动轮播
+    if (bannerItems.length > 0) {
+        startBanner();
+    }
+});
+</script>
+{/block}

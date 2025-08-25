@@ -1,0 +1,155 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-icon font-s10 color-desc margin-right-5">&#xe770;</span>登录记录
+    </div>
+    <div class="layui-card-body">
+        <!-- 统计信息 -->
+        <div class="layui-row layui-col-space15" style="margin-bottom: 20px;">
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body" style="text-align: center;">
+                        <div style="font-size: 24px; color: #1E9FFF; font-weight: bold;">{$stats.total_login|default=0}</div>
+                        <div style="color: #666; margin-top: 5px;">总登录次数</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body" style="text-align: center;">
+                        <div style="font-size: 24px; color: #5FB878; font-weight: bold;">{$stats.today_login|default=0}</div>
+                        <div style="color: #666; margin-top: 5px;">今日登录</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body" style="text-align: center;">
+                        <div style="font-size: 24px; color: #FFB800; font-weight: bold;">{$stats.week_login|default=0}</div>
+                        <div style="color: #666; margin-top: 5px;">本周登录</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body" style="text-align: center;">
+                        <div style="font-size: 14px; color: #666;">{$stats.last_login|default='从未登录'}</div>
+                        <div style="color: #666; margin-top: 5px;">最后登录</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 搜索区域 -->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <form class="layui-form" lay-filter="searchForm">
+                    <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md3">
+                            <input type="text" name="ip" placeholder="IP地址" class="layui-input">
+                        </div>
+                        <div class="layui-col-md3">
+                            <input type="text" name="location" placeholder="登录地点" class="layui-input">
+                        </div>
+                        <div class="layui-col-md4">
+                            <input type="text" name="date_range" placeholder="选择日期范围" class="layui-input" id="dateRange">
+                        </div>
+                        <div class="layui-col-md2">
+                            <button type="button" class="layui-btn" lay-submit lay-filter="search">
+                                <i class="layui-icon layui-icon-search"></i> 搜索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 登录记录表格 -->
+        <table class="layui-hide" id="loginLogTable" lay-filter="loginLogTable"></table>
+    </div>
+</div>
+
+<script type="text/html" id="statusTpl">
+    {{# if(d.status == 1){ }}
+        <span class="layui-badge layui-bg-green">成功</span>
+    {{# } else { }}
+        <span class="layui-badge layui-bg-red">失败</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="deviceTpl">
+    {{# if(d.device_type == 'mobile'){ }}
+        <i class="layui-icon layui-icon-cellphone" style="color: #1E9FFF;"></i> 移动端
+    {{# } else if(d.device_type == 'tablet'){ }}
+        <i class="layui-icon layui-icon-tablet" style="color: #FFB800;"></i> 平板
+    {{# } else { }}
+        <i class="layui-icon layui-icon-desktop" style="color: #5FB878;"></i> 桌面端
+    {{# } }}
+</script>
+
+<script>
+layui.use(['table', 'form', 'laydate'], function(){
+    var table = layui.table
+        ,form = layui.form
+        ,laydate = layui.laydate;
+    
+    // 日期范围选择
+    laydate.render({
+        elem: '#dateRange'
+        ,type: 'date'
+        ,range: true
+        ,format: 'yyyy-MM-dd'
+    });
+    
+    // 渲染表格
+    var tableIns = table.render({
+        elem: '#loginLogTable'
+        ,url: '{:url("getLoginLog")}'
+        ,page: true
+        ,limit: 20
+        ,limits: [10, 20, 50, 100]
+        ,cols: [[
+            {field: 'id', title: 'ID', width: 80, sort: true}
+            ,{field: 'login_ip', title: '登录IP', width: 140}
+            ,{field: 'login_location', title: '登录地点', width: 150}
+            ,{field: 'user_agent', title: '浏览器', width: 200, templet: function(d){
+                var ua = d.user_agent || '';
+                if(ua.indexOf('Chrome') > -1) return '<i class="layui-icon layui-icon-chrome" style="color: #4285f4;"></i> Chrome';
+                if(ua.indexOf('Firefox') > -1) return '<i class="layui-icon layui-icon-firefox" style="color: #ff9500;"></i> Firefox';
+                if(ua.indexOf('Safari') > -1) return '<i class="layui-icon layui-icon-safari" style="color: #00d4ff;"></i> Safari';
+                if(ua.indexOf('Edge') > -1) return '<i class="layui-icon layui-icon-edge" style="color: #0078d4;"></i> Edge';
+                return '<i class="layui-icon layui-icon-browser"></i> 其他';
+            }}
+            ,{field: 'device_type', title: '设备类型', width: 120, templet: '#deviceTpl'}
+            ,{field: 'status', title: '状态', width: 100, templet: '#statusTpl'}
+            ,{field: 'login_time', title: '登录时间', width: 160, sort: true}
+            ,{field: 'remark', title: '备注', minWidth: 150}
+        ]]
+        ,text: {
+            none: '暂无登录记录'
+        }
+    });
+    
+    // 监听搜索
+    form.on('submit(search)', function(data){
+        var field = data.field;
+        
+        // 处理日期范围
+        if(field.date_range){
+            var dates = field.date_range.split(' - ');
+            field.start_date = dates[0];
+            field.end_date = dates[1];
+            delete field.date_range;
+        }
+        
+        // 重载表格
+        table.reload('loginLogTable', {
+            where: field
+            ,page: {
+                curr: 1
+            }
+        });
+        
+        return false;
+    });
+});
+</script>

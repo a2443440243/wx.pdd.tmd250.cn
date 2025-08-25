@@ -1,0 +1,153 @@
+{extend name='main'}
+
+{block name="content"}
+<div class="layui-tab layui-tab-card" lay-filter="profile-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this" data-url="{:url('info')}"><i class="layui-icon layui-icon-user"></i> 个人信息</li>
+        <li data-url="{:url('password')}"><i class="layui-icon layui-icon-password"></i> 修改密码</li>
+        <li data-url="{:url('avatar')}"><i class="layui-icon layui-icon-camera"></i> 头像设置</li>
+        <li data-url="{:url('loginlog')}"><i class="layui-icon layui-icon-log"></i> 登录记录</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div id="profile-content">
+                <!-- 默认加载个人信息页面 -->
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <span class="layui-icon font-s10 color-desc margin-right-5">&#xe770;</span>个人信息概览
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space20">
+                            <div class="layui-col-md3 text-center">
+                                <div class="profile-avatar-box">
+                                    <img src="{$user.headimg|default='/static/theme/img/avatar.png'}" class="profile-avatar-large" alt="头像">
+                                    <p class="margin-top-10">
+                                        <button class="layui-btn layui-btn-sm" onclick="loadTab('{:url('avatar')}')">修改头像</button>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="layui-col-md9">
+                                <div class="profile-info">
+                                    <h2>{$user.nickname|default='未设置'}</h2>
+                                    <p class="color-desc margin-bottom-10">@{$user.phone}</p>
+                                    
+                                    <div class="layui-row layui-col-space15 margin-top-20">
+                                        <div class="layui-col-md6">
+                                            <div class="info-item">
+                                                <label>联系地址：</label>
+                                                <span>{$user.address|default='未设置'}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>性别：</label>
+                                                <span>{if $user.gender == 1}男{elseif $user.gender == 2}女{else}未知{/if}</span>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md6">
+                                            <div class="info-item">
+                                                <label>生日：</label>
+                                                <span>{$user.birthday|default='未设置'}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>最后登录：</label>
+                                                <span>{$user.login_time|default='从未登录'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="margin-top-20">
+                                        <button class="layui-btn" onclick="loadTab('{:url('info')}')">编辑资料</button>
+                                        <button class="layui-btn layui-btn-normal" onclick="loadTab('{:url('password')}')">修改密码</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="style"}
+<style>
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #f0f0f0;
+    object-fit: cover;
+}
+
+.profile-info h2 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
+
+.info-item label {
+    display: inline-block;
+    width: 80px;
+    color: #666;
+    font-weight: normal;
+}
+
+.layui-tab-title li {
+    padding: 0 20px;
+}
+
+.layui-tab-title li i {
+    margin-right: 5px;
+}
+
+.profile-content-loading {
+    text-align: center;
+    padding: 50px 0;
+    color: #999;
+}
+</style>
+{/block}
+
+{block name="script"}
+<script>
+layui.use(['element', 'jquery'], function(){
+    var element = layui.element;
+    var $ = layui.$;
+    
+    // Tab切换事件
+    element.on('tab(profile-tab)', function(data){
+        var url = $(this).attr('data-url');
+        if (url) {
+            loadTab(url);
+        }
+    });
+    
+    // 点击Tab标题时的处理
+    $('.layui-tab-title li').click(function(){
+        var url = $(this).attr('data-url');
+        if (url) {
+            loadTab(url);
+        }
+    });
+    
+    // 加载Tab内容
+    window.loadTab = function(url) {
+        var content = $('#profile-content');
+        content.html('<div class="profile-content-loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中...</div>');
+        
+        $.get(url, function(data) {
+            content.html(data);
+            // 重新渲染表单
+            layui.form.render();
+        }).fail(function() {
+            content.html('<div class="profile-content-loading"><i class="layui-icon layui-icon-close"></i> 加载失败</div>');
+        });
+    };
+});
+</script>
+{/block}

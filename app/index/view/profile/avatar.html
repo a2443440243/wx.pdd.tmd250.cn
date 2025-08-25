@@ -1,0 +1,152 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-icon font-s10 color-desc margin-right-5">&#xe66f;</span>头像设置
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-md6">
+                <div class="layui-form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">当前头像</label>
+                        <div class="layui-input-block">
+                            <div class="avatar-preview" style="text-align: center; padding: 20px;">
+                                <img id="currentAvatar" src="{$user.headimg|default='/static/theme/img/avatar.png'}" 
+                                     style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #e6e6e6; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传头像</label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" id="uploadAvatar">
+                                <i class="layui-icon">&#xe67c;</i>选择图片
+                            </button>
+                            <div class="layui-form-mid layui-word-aux">支持jpg、png格式，大小不超过2MB</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item" id="previewArea" style="display: none;">
+                        <label class="layui-form-label">预览</label>
+                        <div class="layui-input-block">
+                            <div style="text-align: center; padding: 20px;">
+                                <img id="previewImg" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #1E9FFF; object-fit: cover;">
+                            </div>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <button type="button" class="layui-btn layui-btn-sm" id="confirmUpload">确认上传</button>
+                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="cancelUpload">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">上传说明</div>
+                    <div class="layui-card-body">
+                        <div class="layui-text">
+                            <p><i class="layui-icon layui-icon-tips" style="color: #1E9FFF;"></i> 支持JPG、PNG格式</p>
+                            <p><i class="layui-icon layui-icon-tips" style="color: #1E9FFF;"></i> 文件大小不超过2MB</p>
+                            <p><i class="layui-icon layui-icon-tips" style="color: #1E9FFF;"></i> 建议上传正方形图片</p>
+                            <p><i class="layui-icon layui-icon-tips" style="color: #1E9FFF;"></i> 图片将自动裁剪为圆形</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="layui-card">
+                    <div class="layui-card-header">头像历史</div>
+                    <div class="layui-card-body">
+                        <div class="avatar-history" style="text-align: center;">
+                            <p class="layui-text">暂无历史头像</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+layui.use(['upload', 'layer'], function(){
+    var upload = layui.upload
+        ,layer = layui.layer;
+    
+    var uploadedFile = null;
+    
+    // 头像上传
+    var uploadInst = upload.render({
+        elem: '#uploadAvatar'
+        ,url: '{:url("uploadAvatar")}'
+        ,accept: 'images'
+        ,acceptMime: 'image/jpg,image/jpeg,image/png'
+        ,size: 2048 // 2MB
+        ,auto: false // 不自动上传
+        ,choose: function(obj){
+            var files = obj.pushFile();
+            
+            // 预读本地文件
+            obj.preview(function(index, file, result){
+                uploadedFile = file;
+                $('#previewImg').attr('src', result);
+                $('#previewArea').show();
+            });
+        }
+        ,done: function(res){
+            if(res.code === 1){
+                layer.msg('头像上传成功', {icon: 1});
+                $('#currentAvatar').attr('src', res.data.url);
+                $('#previewArea').hide();
+                uploadedFile = null;
+            } else {
+                layer.msg(res.info || '上传失败', {icon: 2});
+            }
+        }
+        ,error: function(){
+            layer.msg('上传失败，请重试', {icon: 2});
+        }
+    });
+    
+    // 确认上传
+    $('#confirmUpload').on('click', function(){
+        if(!uploadedFile){
+            layer.msg('请先选择图片', {icon: 2});
+            return;
+        }
+        
+        var formData = new FormData();
+        formData.append('file', uploadedFile);
+        
+        var loadIndex = layer.load(2, {shade: 0.3});
+        
+        $.ajax({
+            url: '{:url("uploadAvatar")}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res){
+                layer.close(loadIndex);
+                if(res.code === 1){
+                    layer.msg('头像上传成功', {icon: 1});
+                    $('#currentAvatar').attr('src', res.data.url);
+                    $('#previewArea').hide();
+                    uploadedFile = null;
+                } else {
+                    layer.msg(res.info || '上传失败', {icon: 2});
+                }
+            },
+            error: function(){
+                layer.close(loadIndex);
+                layer.msg('上传失败，请重试', {icon: 2});
+            }
+        });
+    });
+    
+    // 取消上传
+    $('#cancelUpload').on('click', function(){
+        $('#previewArea').hide();
+        uploadedFile = null;
+    });
+});
+</script>

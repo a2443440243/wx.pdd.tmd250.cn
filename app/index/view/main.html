@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{$title|default='个人中心'} - {$site_name|default='活码官网'}</title>
+    <meta name="keywords" content="{$keywords|default='个人中心,用户管理'}">
+    <meta name="description" content="{$description|default='用户个人中心，管理个人信息和账户设置'}">
+    <link rel="icon" href="{$site_icon|default='/static/theme/img/favicon.ico'}">
+    
+    <!-- LayUI CSS -->
+    <link rel="stylesheet" href="/static/plugs/layui/css/layui.css">
+    
+    <!-- 自定义样式 -->
+    <style>
+        body { background-color: #f2f2f2; }
+        .layui-header { background-color: #393D49; }
+        .layui-logo { color: #fff; font-size: 18px; }
+        .layui-nav-item a { color: #fff; }
+        .layui-body { padding: 15px; }
+        .layui-card { margin-bottom: 15px; }
+        .profile-header { text-align: center; padding: 20px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; }
+        .profile-name { margin-top: 10px; font-size: 18px; font-weight: bold; }
+    </style>
+    
+    {block name="style"}{/block}
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-logo">个人中心</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="{$user.headimg|default='/static/theme/img/avatar.png'}" class="layui-nav-img">
+                        {$user.nickname|default=$user.phone|default='用户'}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/index/profile/info">个人信息</a></dd>
+                        <dd><a href="/index/profile/password">修改密码</a></dd>
+                        <dd><a href="/index/auth/logout">退出登录</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 侧边栏 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="profile-nav">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;">个人中心</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="/index/profile">概览</a></dd>
+                            <dd><a href="/index/profile/info">个人信息</a></dd>
+                            <dd><a href="/index/profile/password">修改密码</a></dd>
+                            <dd><a href="/index/profile/avatar">头像设置</a></dd>
+                            <dd><a href="/index/profile/loginlog">登录记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 主体内容 -->
+        <div class="layui-body">
+            {block name="content"}{/block}
+        </div>
+        
+        <!-- 底部 -->
+        <div class="layui-footer">
+            <p>Copyright © 2024 活码官网. All rights reserved.</p>
+        </div>
+    </div>
+    
+    <!-- LayUI JS -->
+    <script src="/static/plugs/layui/layui.js"></script>
+    
+    <!-- 自定义脚本 -->
+    <script>
+        layui.use(['element', 'nav'], function(){
+            var element = layui.element;
+            var $ = layui.$;
+            
+            // 监听导航点击
+            element.on('nav(profile-nav)', function(elem){
+                console.log(elem);
+            });
+        });
+    </script>
+    
+    {block name="script"}{/block}
+</body>
+</html>
