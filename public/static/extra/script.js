@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | 官方网站: https://thinkadmin.top
 // +----------------------------------------------------------------------
-// | 版权所有 2014~2024 ThinkAdmin [ thinkadmin.top ]
+// | 版权所有 2014~2025 ThinkAdmin [ thinkadmin.top ]
 // +----------------------------------------------------------------------
 // | 开源协议 ( https://mit-license.org )
 // | 免责声明 ( https://thinkadmin.top/disclaimer )
@@ -45,4 +45,12 @@ $(function () {
     window.showTableImage = function (image, circle, size, title) {
         return $.layTable.showImage(image, circle, size, title);
     };
+
+    // 显示商品规格
+    window.showSpec = function (spec) {
+        let names = [];
+        return layui.each(spec.split(';;'), function (i, vv) {
+            names.push(vv.split('::').pop());
+        }), names.join(' ');
+    }
 });
